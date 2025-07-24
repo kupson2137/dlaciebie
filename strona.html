@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Kochasz mnie? 💘</title>
+<style>
+  body {
+    background: linear-gradient(135deg, #ffe4e1, #fff0f5);
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+    padding-top: 70px;
+    color: #d63384;
+    overflow-x: hidden;
+    margin: 0;
+  }
+  h1 {
+    font-size: 3rem;
+    margin-bottom: 40px;
+  }
+  .buttons {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+  button {
+    padding: 1.3rem 3rem;
+    font-size: 1.6rem;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    user-select: none;
+    position: relative;
+    transform-origin: center;
+  }
+  .yes-btn {
+    background-color: #ff4081;
+    color: white;
+    animation: pulse 1.5s infinite;
+  }
+  .no-btn {
+    background-color: #ffd6e8;
+    color: #a63e6f;
+    border: 2px solid #ff69b4;
+  }
+  .result {
+    margin-top: 50px;
+    font-size: 2.4rem;
+    color: #e91e63;
+    display: none;
+    text-shadow: 0 0 10px #ff4081;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(1);
+      box-shadow: 0 0 10px #ff4081;
+    }
+    50% {
+      transform: scale(1.1);
+      box-shadow: 0 0 20px #ff79a9;
+    }
+  }
+
+  .heart {
+    position: fixed;
+    width: 20px;
+    height: 20px;
+    background-color: #ff4081;
+    clip-path: polygon(
+      50% 0%,
+      61% 10%,
+      70% 18%,
+      75% 30%,
+      75% 50%,
+      60% 65%,
+      50% 80%,
+      40% 65%,
+      25% 50%,
+      25% 30%,
+      30% 18%,
+      39% 10%
+    );
+    opacity: 0.9;
+    pointer-events: none;
+    animation-name: fall;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+  }
+
+  @keyframes fall {
+    0% {
+      transform: translateY(0) rotate(0deg);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(800px) rotate(360deg);
+      opacity: 0;
+    }
+  }
+</style>
+</head>
+<body>
+
+<h1>Kochasz mnie? 💘</h1>
+
+<div class="buttons">
+  <button class="yes-btn" id="yesBtn">TAK 💖</button>
+  <button class="no-btn" id="noBtn">NIE 😢</button>
+</div>
+
+<div class="result" id="resultText">Wiedziałem! Kocham Cię najbardziej na świecie 😍💞</div>
+
+<audio id="music" src="twoja-muzyka.mp3" preload="auto"></audio>
+
+<script>
+  const yesBtn = document.getElementById('yesBtn');
+  const noBtn = document.getElementById('noBtn');
+  const resultText = document.getElementById('resultText');
+  const music = document.getElementById('music');
+
+  let yesScale = 1;
+  let noScale = 1;
+  let noClicks = 0;
+
+  function createHeart() {
+    const heart = document.createElement('div');
+    heart.classList.add('heart');
+    heart.style.left = Math.random() * window.innerWidth + 'px';
+    heart.style.top = '-30px';
+    const size = 10 + Math.random() * 20;
+    heart.style.width = size + 'px';
+    heart.style.height = size + 'px';
+    heart.style.animationDuration = (3 + Math.random() * 2) + 's';
+    document.body.appendChild(heart);
+
+    setTimeout(() => {
+      heart.remove();
+    }, 5000);
+  }
+
+  yesBtn.addEventListener('click', () => {
+    yesScale += 0.15;
+    yesBtn.style.transform = `scale(${yesScale})`;
+
+    for (let i = 0; i < 5; i++) {
+      setTimeout(createHeart, i * 150);
+    }
+
+    if (yesScale >= 2.5) {
+      resultText.style.display = 'block';
+      music.currentTime = 0;
+      music.play();
+      yesBtn.disabled = true;
+      noBtn.disabled = true;
+    }
+  });
+
+  noBtn.addEventListener('click', () => {
+    noClicks++;
+    noScale -= 0.15;
+    if (noScale < 0.5) noScale = 0.5;
+    noBtn.style.transform = `scale(${noScale})`;
+
+    const responses = [
+      "Ej, naprawdę? 🥺",
+      "No weź... 😔",
+      "Nie rób mi tego 😢",
+      "Serio...? 😭",
+      "Okej... ale i tak Cię kocham 💔",
+      "Nie ma zmiłuj! 🙈"
+    ];
+
+    if (noClicks < responses.length) {
+      noBtn.textContent = responses[noClicks];
+    } else {
+      noBtn.textContent = "TAK 🙈";
+      noBtn.classList.remove('no-btn');
+      noBtn.classList.add('yes-btn');
+      noBtn.style.transform = 'scale(1)';
+      noScale = 1;
+
+      noBtn.onclick = () => {
+        yesScale += 0.15;
+        noBtn.style.transform = `scale(${yesScale})`;
+
+        for (let i = 0; i < 5; i++) {
+          setTimeout(createHeart, i * 150);
+        }
+
+        if (yesScale >= 2.5) {
+          resultText.style.display = 'block';
+          music.currentTime = 0;
+          music.play();
+          yesBtn.disabled = true;
+          noBtn.disabled = true;
+        }
+      };
+    }
+  });
+</script>
+
+</body>
+</html>
